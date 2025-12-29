@@ -85,4 +85,12 @@ uint64_t strToHexAddress(QString s)
     return ok ? addr : 0;
 }
 
+QString formatDouble(double v)
+{
+    if (qFuzzyCompare(v, qRound(v)))
+        return QString::number((int64_t)qRound(v));
+
+    return QString::number(v, 'f', 3).remove(QRegExp("0+$")).remove(QRegExp("\\.$"));
+}
+
 } // namespace Contx

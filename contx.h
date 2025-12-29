@@ -40,6 +40,8 @@ QString bytesToStr(const uint8_t* data,
 
 uint64_t strToHexAddress(QString s);
 
+QString formatDouble(double v);
+
 } // namespace Contx
 
 #endif // CONTX_H
