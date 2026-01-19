@@ -42,6 +42,8 @@ uint64_t strToHexAddress(QString s);
 
 QString formatDouble(double v, int prec=6);
 
+QString formatHexUpper(const QString& text);//只把十六进制常量转成大写
+
 } // namespace Contx
 
 #endif // CONTX_H

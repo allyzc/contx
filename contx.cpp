@@ -93,4 +93,30 @@ QString formatDouble(double v, int prec)
     return QString::number(v, 'f', prec).remove(QRegExp("0+$")).remove(QRegExp("\\.$"));
 }
 
+//只把十六进制常量转成大写
+QString formatHexUpper(const QString& text)
+{
+    QString result = text;
+
+    // 捕获：0x + 十六进制数字
+    static QRegularExpression re("(0x)([0-9a-f]+)");
+
+    QRegularExpressionMatchIterator it = re.globalMatch(result);
+    while (it.hasNext())
+    {
+        QRegularExpressionMatch m = it.next();
+
+        QString prefix = m.captured(1); // "0x"
+        QString digits = m.captured(2); // "7f"
+
+        QString replaced = prefix + digits.toUpper();
+
+        result.replace(m.capturedStart(),
+                       m.capturedLength(),
+                       replaced);
+    }
+
+    return result;
+}
+
 } // namespace Contx
