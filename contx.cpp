@@ -67,23 +67,35 @@ QString bytesToStr(const uint8_t* data,
 
 uint64_t strToHexAddress(QString s)
 {
-    // 1. 去掉前后空白
     s = s.trimmed();
+    if (s.isEmpty())
+        return 0;
 
-    // 2. 去掉 0x / 0X
-    if (s.startsWith("0x", Qt::CaseInsensitive)) {
+    // 1. 先检查：是否包含非法字母（G-Z / g-z）
+    //    只要出现，直接判非法
+    static const QRegularExpression illegalLetter(
+        R"([G-Zg-z])"
+        );
+    if (illegalLetter.match(s).hasMatch())
+        return 0;
+
+    // 2. 去掉 0x / 0X 前缀（允许前面有空格）
+    if (s.startsWith("0x", Qt::CaseInsensitive))
         s = s.mid(2);
-    }
 
-    // 3. 移除所有非十六进制字符（空格、逗号等）
+    // 3. 移除允许修正的分隔符
+    //    这里只保留 0-9 A-F a-f
     s.remove(QRegularExpression("[^0-9A-Fa-f]"));
+
+    if (s.isEmpty())
+        return 0;
 
     // 4. 转换
     bool ok = false;
     uint64_t addr = s.toULongLong(&ok, 16);
-
     return ok ? addr : 0;
 }
+
 
 QString formatDouble(double v, int prec)
 {
