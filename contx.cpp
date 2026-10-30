@@ -67,22 +67,26 @@ QString bytesToStr(const uint8_t* data,
 
 uint64_t strToHexAddress(QString s, bool* ok)
 {
-    // 1. 去掉前后空白
+    // 所有提前返回都必须明确报告失败，避免调用方复用旧状态。
+    if (ok)
+        *ok = false;
+
+    // 1. 去掉前后空白及合法的 0x / 0X 前缀。
     s = s.trimmed();
     if (s.isEmpty())
         return 0;
 
-    // 1. 先检查：是否包含非法字母（G-Z / g-z）
+    // 必须先去掉前缀，否则其中的 x 会被下面的非法字母检查拒绝。
+    if (s.startsWith(QStringLiteral("0x"), Qt::CaseInsensitive))
+        s = s.mid(2);
+
+    // 2. 检查是否包含非法字母（G-Z / g-z）
     //    只要出现，直接判非法
     static const QRegularExpression illegalLetter(
         R"([G-Zg-z])"
         );
     if (illegalLetter.match(s).hasMatch())
         return 0;
-
-    // 2. 去掉 0x / 0X 前缀（允许前面有空格）
-    if (s.startsWith("0x", Qt::CaseInsensitive))
-        s = s.mid(2);
 
     // 3. 移除允许修正的分隔符
     //    这里只保留 0-9 A-F a-f
