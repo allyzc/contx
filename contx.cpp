@@ -65,7 +65,7 @@ QString bytesToStr(const uint8_t* data,
     return result;
 }
 
-uint64_t strToHexAddress(QString s)
+uint64_t strToHexAddress(QString s, bool* ok)
 {
     // 1. 去掉前后空白
     s = s.trimmed();
@@ -79,10 +79,14 @@ uint64_t strToHexAddress(QString s)
     s.remove(QRegularExpression("[^0-9A-Fa-f]"));
 
     // 4. 转换
-    bool ok = false;
-    uint64_t addr = s.toULongLong(&ok, 16);
+    bool converted = false;
+    const uint64_t addr = s.toULongLong(&converted, 16);
 
-    return ok ? addr : 0;
+    if (ok) {
+        *ok = converted;
+    }
+
+    return converted ? addr : 0;
 }
 
 QString formatDouble(double v, int prec)

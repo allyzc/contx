@@ -38,7 +38,13 @@ QString bytesToStr(const uint8_t* data,
                    bool upper = true,
                    QChar sep = QChar('\0'));
 
-uint64_t strToHexAddress(QString s);
+/**
+ * @brief 以兼容模式解析十六进制地址
+ *
+ * 支持 0x / 0X 前缀，并忽略空格、逗号等非十六进制分隔字符。
+ * @param ok 可选的解析结果；用于区分合法的 0 地址与解析失败。
+ */
+uint64_t strToHexAddress(QString s, bool* ok = nullptr);
 
 QString formatDouble(double v, int prec=6);
 
