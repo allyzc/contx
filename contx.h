@@ -7,6 +7,18 @@
 
 namespace Contx {
 
+enum class HexAddressParseStatus
+{
+    Success = 0,
+    EmptyInput,
+    InvalidCharacter,
+    InvalidSyntax,
+    DivideByZero,
+    Overflow,
+    Underflow,
+    ExpressionTooComplex
+};
+
 /**
  * @brief 将十六进制字符串解析为字节数组
  *
@@ -39,12 +51,15 @@ QString bytesToStr(const uint8_t* data,
                    QChar sep = QChar('\0'));
 
 /**
- * @brief 以兼容模式解析十六进制地址
+ * @brief 解析十六进制地址或地址计算表达式
  *
- * 支持 0x / 0X 前缀，并忽略空格、逗号等非十六进制分隔字符。
- * @param ok 可选的解析结果；用于区分合法的 0 地址与解析失败。
+ * 不含运算符时保留原有兼容解析：支持 0x / 0X 前缀，并忽略空格、
+ * 逗号等非十六进制分隔字符。包含 +、-、*、/ 或括号时按表达式解析，
+ * 支持标准运算优先级；所有操作数均为十六进制无符号整数。
+ * @param status 可选的解析状态；用于区分合法的 0 地址与各类解析失败。
  */
-uint64_t strToHexAddress(QString s, bool* ok = nullptr);
+uint64_t strToHexAddress(QString s,
+                         HexAddressParseStatus* status = nullptr);
 
 QString formatDouble(double v, int prec=6);
 
